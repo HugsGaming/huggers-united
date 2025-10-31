@@ -1,12 +1,9 @@
 // src/components/LikedMeDeck.tsx
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/axios';
 import type { Profile } from '../types'; // Assuming your Profile type is defined here
 import { FiX, FiHeart } from 'react-icons/fi';
 import { useSpring, animated } from '@react-spring/web';
-import { useAuth } from '../contexts/AuthContext'; // Assuming you have an AuthContext for user data
-import { useSocket } from '../contexts/SocketContext'; // We'll create this soon
-
 interface LikedMeDeckProps {
     onMatchMade: (match: any) => void; // Callback for when a match is made from this deck
     onProfileProcessed: (profileId: string) => void; // Callback to remove processed profile from parent
@@ -16,8 +13,6 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
     onMatchMade,
     onProfileProcessed,
 }) => {
-    const { user } = useAuth(); // Get current user from context
-    const { socket } = useSocket(); // Get socket from context
 
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);

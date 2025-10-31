@@ -5,12 +5,11 @@ import LikedMeDeck from '../components/LikedMeDeck';
 import MatchesList from '../components/MatchesList';
 import ChatWindow from '../components/ChatWindow';
 import { useAuth } from '../contexts/AuthContext'; // Use useAuth hook
-import type { Match as IMatch, Profile } from '../types';
+import type { Match as IMatch } from '../types';
 import { SocketContext } from '../contexts/SocketContext'; // Correct path to contexts
 import { toast } from 'react-toastify'; // For direct toast notifications on dashboard
 
 const Dashboard: React.FC = () => {
-    const { user, isAuthenticated, isLoadingAuth } = useAuth(); // Use useAuth hook
     const { socket } = useContext(SocketContext);
 
     const [activeTab, setActiveTab] = useState<'swipe' | 'liked-me' | 'matches'>('swipe');
@@ -21,7 +20,7 @@ const Dashboard: React.FC = () => {
 
     // State to manage profiles that have been processed (liked/disliked)
     // This helps in keeping the LikedMeDeck and SwipeDeck coherent
-    const [processedProfileIds, setProcessedProfileIds] = useState<Set<string>>(new Set());
+    const [_, setProcessedProfileIds] = useState<Set<string>>(new Set());
 
     // Listen for new match events from the server when socket is available
     useEffect(() => {

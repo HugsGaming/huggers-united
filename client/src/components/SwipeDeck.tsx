@@ -1,11 +1,10 @@
 // src/components/SwipeDeck.tsx
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect } from 'react';
 import type { Profile } from '../types';
 import axiosInstance from '../api/axios';
 import { useSpring, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import { FiX, FiHeart } from 'react-icons/fi'; // Icons for dislike and like
-import { SocketContext }  from '../contexts/SocketContext'; // Import SocketContext
 
 interface SwipeDeckProps {
     onMatchMade: (match: any) => void; // Callback for when a match is made
@@ -16,8 +15,6 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
     const [profiles, setProfiles] = React.useState<Profile[]>([]);
     const [currentIndex, setCurrentIndex] = React.useState(0);
     const [loading, setLoading] = React.useState(true);
-
-    const { socket } = useContext(SocketContext); // Access socket if needed, mainly for UI feedback
 
     const fetchProfiles = async () => {
         try {
@@ -89,7 +86,6 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
         ({
             down,
             movement: [mx],
-            velocity: [vx],
             direction: [xDir],
             cancel,
             distance,
