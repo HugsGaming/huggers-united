@@ -14,9 +14,9 @@ export interface Profile {
     profilePicture: string;
     gender: string;
     interests: string[];
-    dateOfBirth: string;
-    createdAt: string;
-    updatedAt: string;
+    dateOfBirth: Date | string;
+    createdAt: Date | string;
+    updatedAt: Date | string;
     username: string;
     email: string;
 }
@@ -49,5 +49,7 @@ export interface Message {
     match: string;
     content: string;
     read: boolean;
-    createdAt: Date;
+    createdAt: string;
+    isOptimistic?: boolean;
+    tempId?: string;
 }

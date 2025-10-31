@@ -4,6 +4,7 @@ import { config } from './config/env';
 import { logger } from './config/logger'
 import authRoutes from './routes/auth.routes'
 import profileRoutes from './routes/profile.routes'
+import messageRoutes from './routes/message.routes'
 import { errorHandler } from './middleware/errorHandler';
 import cors from 'cors'
 
@@ -30,12 +31,19 @@ app.use(express.json());
 app.use(cors());
 
 app.use((req, res, next) => {
+    req.io = io;
+    req.onlineUsers = onlineUsers;
+    next();
+})
+
+app.use((req, res, next) => {
     logger.info(`Request: ${req.method} ${req.url}`);
     next();
 });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/messages', messageRoutes);
 
 app.use(errorHandler);
 
@@ -62,11 +70,7 @@ io.on('connection', (socket) => {
     })
 })
 
-app.use((req, res, next) => {
-    req.io = io;
-    req.onlineUsers = onlineUsers;
-    next();
-})
+
 
 server.listen(config.port, () => {
     logger.info(`Server running on port ${config.port}`);

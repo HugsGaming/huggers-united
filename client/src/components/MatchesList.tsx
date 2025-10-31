@@ -1,13 +1,13 @@
 // src/components/MatchesList.tsx
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/axios';
-import type { Match as IMatch } from '../types'; // Import your Match interface
+import type { Match as IMatch, Message } from '../types'; // Import Message interface
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext'; // To show online status
 
 interface MatchesListProps {
     onMatchClick: (match: IMatch) => void; // Callback to view a specific chat
-    newMatchTrigger: any; // A state variable from parent to trigger re-fetch on new match
+    newMatchTrigger: number; // A state variable from parent to trigger re-fetch on new match
 }
 
 const MatchesList: React.FC<MatchesListProps> = ({ onMatchClick, newMatchTrigger }) => {
@@ -21,7 +21,7 @@ const MatchesList: React.FC<MatchesListProps> = ({ onMatchClick, newMatchTrigger
         setLoading(true);
         setError(null);
         try {
-            const response = await axiosInstance.get('/profile/matches');
+            const response = await axiosInstance.get('profile/matches');
             console.log('Matches:', response.data);
             setMatches(response.data);
         } catch (err) {
@@ -71,7 +71,7 @@ const MatchesList: React.FC<MatchesListProps> = ({ onMatchClick, newMatchTrigger
     }
 
     return (
-        <div className="w-full bg-white rounded-lg shadow-md p-4">
+        <div className="w-full bg-white rounded-lg shadow-md p-4 h-full overflow-y-auto"> {/* Added h-full and overflow */}
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Matches</h2>
             <ul className="space-y-4">
                 {matches.map((match) => {

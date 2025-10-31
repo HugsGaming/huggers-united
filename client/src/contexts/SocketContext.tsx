@@ -1,3 +1,4 @@
+// src/contexts/SocketContext.tsx (Existing, no changes needed for chat)
 import { createContext, useEffect, useContext, useState, type ReactNode } from "react";
 import { io, type Socket } from "socket.io-client";
 import { useAuth } from "./AuthContext";
@@ -43,7 +44,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                 setOnlineUsers(users);
             });
 
-            newSocket.on('newMatch', (data: { matchId: string; otherUser: { _id: string, name: string, profilePicture?: string }; message: string }) => {
+            newSocket.on('newMatch', (data: { matchId: string; otherUser: { _id: string, username: string, profilePicture?: string }; message: string }) => {
                 console.log("New match:", data);
                 toast.success(data.message, {
                     position: 'top-right',
@@ -55,6 +56,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                     progress: undefined,
                 })
             });
+
+            // No specific `newMessage` listener needed here. Dashboard and ChatWindow
+            // handle it for specific UI updates. This context provides the socket.
 
             setSocket(newSocket);
 
