@@ -5,11 +5,19 @@ import { logger } from "../config/logger";
 import User, { IUser } from "../models/User";
 import mongoose from "mongoose";
 
-export interface CustomRequest extends Request {
+export interface AuthRequest extends Request {
     user?: IUser
 }
 
-export const protect = async (req: CustomRequest, res: Response, next: NextFunction) => {
+/**
+ * Middleware to protect routes by verifying the token provided in the Authorization header.
+ * If the token is invalid or missing, it will return a 401 Unauthorized response.
+ * If the token is valid, it will assign the user to the request object and call the next middleware function.
+ * @param {AuthRequest} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function to be called.
+ */
+export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
     let token;
 
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {

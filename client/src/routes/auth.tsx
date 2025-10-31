@@ -32,10 +32,6 @@ function Auth() {
                     password
                 });
                 const { token, _id, username: loggedInUsername } = response.data;
-                console.log('Login successful!');
-                console.log('User ID:', _id);
-                console.log('Username:', loggedInUsername);
-                console.log('Token:', token);
 
                 login(token);
 

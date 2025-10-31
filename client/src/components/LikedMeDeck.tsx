@@ -34,7 +34,7 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
         } finally {
             setLoading(false);
         }
-    }, []); // Empty dependency array means it's created once
+    }, []);
 
     useEffect(() => {
         fetchProfilesThatLikedMe();

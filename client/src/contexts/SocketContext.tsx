@@ -57,9 +57,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
                 })
             });
 
-            // No specific `newMessage` listener needed here. Dashboard and ChatWindow
-            // handle it for specific UI updates. This context provides the socket.
-
             setSocket(newSocket);
 
             return () => {

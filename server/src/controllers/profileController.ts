@@ -5,10 +5,8 @@ import { IUser } from "../models/User";
 import { logger } from "../config/logger";
 import cloudinary from "../config/cloudinary";
 import mongoose from "mongoose";
-import Like, { ILike} from "../models/Like";
-import Match, {IMatch} from "../models/Match";
-import { log } from "console";
-import { create } from "domain";
+import Like from "../models/Like";
+import Match from "../models/Match";
 
 interface ProfileRequest extends Request {
     user?: IUser;
@@ -366,6 +364,14 @@ export const getProfilesLikedByCurrentUser = async (req: ProfileRequest, res: Re
     }
 }
 
+/**
+ * Retrieves all profiles of users who liked the current user
+ * @param {ProfileRequest} req - The request object with the logged in user
+ * @param {Response} res - The response object
+ * @param {NextFunction} next - The next function to be called
+ * @throws {Error} - If the user is not authenticated
+ * @returns {Promise<void>} - A promise resolving to void
+ */
 export const getProfilesThatLikedCurrentUser = async (req: ProfileRequest, res: Response, next: NextFunction) => {
     try {
         const currentUserId = req.user?._id as mongoose.Types.ObjectId;
@@ -446,6 +452,15 @@ export const getProfilesThatLikedCurrentUser = async (req: ProfileRequest, res: 
     }
 }
 
+
+/**
+ * Retrieves all matches for the current user
+ * @param {ProfileRequest} req - The request object with the logged in user
+ * @param {Response} res - The response object
+ * @param {NextFunction} next - The next function to be called
+ * @throws {Error} - If the user is not authenticated
+ * @returns {Promise<void>} - A promise resolving to void
+ */
 export const getUserMatches = async (req: ProfileRequest, res: Response, next: NextFunction) => {
     try {
         const currentUserId = req.user?._id as mongoose.Types.ObjectId;

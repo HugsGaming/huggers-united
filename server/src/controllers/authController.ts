@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import User from "../models/User";
 import { generateToken } from "../utils/jwt";
 import { logger } from "../config/logger";
-import { CustomRequest } from "../middleware/auth";
+import { AuthRequest } from "../middleware/auth";
 import mongoose from "mongoose";
 
 /**
@@ -87,13 +87,13 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
 /**
  * Fetches the user profile for the currently logged in user
- * @param {CustomRequest} req - The request object with the logged in user
+ * @param {AuthRequest} req - The request object with the logged in user
  * @param {Response} res - The response object
  * @param {NextFunction} next - The next function to be called
  * @returns {Promise<void>} - A promise resolving to void
  */
 export const getUserProfile = async (
-    req: CustomRequest,
+    req: AuthRequest,
     res: Response,
     next: NextFunction
 ) => {

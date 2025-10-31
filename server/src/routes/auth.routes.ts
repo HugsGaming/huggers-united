@@ -4,6 +4,7 @@ import { registerUser, loginUser, getUserProfile } from "../controllers/authCont
 import { protect } from "../middleware/auth";
 
 const router = Router();
+
 /* 
     @desc    Register a new user
     @route   POST /api/auth/register

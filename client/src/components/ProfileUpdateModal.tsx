@@ -81,13 +81,6 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
 
         if (profilePicture) {
             formData.append('profilePicture', profilePicture);
-        } else if (currentProfile?.profilePicture && !previewProfilePicture) {
-            // If user explicitly removed profile picture (e.g. via an X button, not implemented here)
-            // or if no new file is selected and there was a previous one, keep the existing one.
-            // For now, if no new picture is uploaded, the existing one is implicitly kept by not
-            // sending a new 'profilePicture' field. If `profilePictureUrl` in backend is empty string
-            // due to `delete profileFields.profilePicture` logic, it'll remove it.
-            // If you want to explicitly remove a profile picture, you'd need a separate mechanism.
         }
 
         try {

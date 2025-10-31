@@ -259,7 +259,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ match, onBack }) => {
                         </div>
                     </div>
                 ))}
-                {/* No div here anymore, messageEndRef is on the parent div */}
             </div>
 
             <form onSubmit={handleSendMessage} className="flex p-4 border-t">

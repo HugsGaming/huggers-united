@@ -20,7 +20,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
         try {
             setLoading(true);
             const response = await axiosInstance.get('/profile/random');
-            const data = response.data; // This will now be an array
+            const data = response.data;
             setProfiles(data);
             setCurrentIndex(0); // Reset index when new profiles are fetched
         } catch (error) {
