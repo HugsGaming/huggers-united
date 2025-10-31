@@ -17,7 +17,7 @@ interface SocketProviderProps {
     children: ReactNode;
 }
 
-const SOCKET_SERVER_URL = import.meta.env.SOCKET_URL;
+const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_URL;
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     const { user, isAuthenticated, isLoadingAuth } = useAuth();
