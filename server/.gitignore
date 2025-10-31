@@ -1,0 +1,30 @@
+# Node.js dependencies
+/node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+/build
+/dist
+/public/build
+/public/dist
+
+# Editor and OS specific files
+.DS_Store
+.vscode/
+.idea/
+
+# Test results
+/coverage
+
+# Other temporary files
+*.tmp
