@@ -185,6 +185,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
 
                     return (
                         <animated.div
+                            // @ts-ignore
                             {...(isCurrent ? bind() : {})} // Only bind drag gestures to the current card
                             key={profile._id}
                             className={`absolute w-full max-w-sm h-full bg-white rounded-xl shadow-lg flex flex-col overflow-hidden transform-gpu will-change-transform ${
