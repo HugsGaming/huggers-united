@@ -393,7 +393,11 @@ export const getProfilesThatLikedCurrentUser = async (req: ProfileRequest, res: 
             liked: { $in: likerUserIds },
         }).distinct("liked");
 
-        const filteredLikerUserIds = likerUserIds.filter((userId) => !alreadyInteractedWith.includes(userId));
+        const filteredLikerUserIds = likerUserIds.filter(
+            (userId) => !alreadyInteractedWith.some(
+                (interactedId) => interactedId.equals(userId)
+            )
+        );
 
         if (filteredLikerUserIds.length === 0) {
             return res.status(200).json([]);

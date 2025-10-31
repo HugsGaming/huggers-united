@@ -141,7 +141,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-indigo-500"></div>
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
                 <p className="ml-4 text-xl text-gray-700">Loading profiles...</p>
             </div>
         );
@@ -159,7 +159,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
                 </p>
                 <button
                     onClick={fetchProfiles}
-                    className="mt-8 px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 transition-colors duration-200"
+                    className="mt-8 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition-colors duration-200"
                 >
                     Fetch New Profiles
                 </button>
@@ -168,14 +168,13 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-            <h1 className="text-4xl font-extrabold text-indigo-700 mb-8">
+        <div className="flex flex-col items-center justify-center min-h-full bg-linear-to-br from-blue-50 to-indigo-100 p-4 rounded-2xl shadow-xl">
+            <h1 className="text-4xl font-extrabold text-blue-700 mb-8">
                 Find Your Match!
             </h1>
 
             <div className="relative w-full max-w-sm h-96 flex justify-center items-center">
                 {profiles.map((profile, idx) => {
-                    // Only render current card for performance (or current and next one for a deck effect)
                     if (idx !== currentIndex) return null;
 
                     const isCurrent = idx === currentIndex;
@@ -188,7 +187,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
                             // @ts-ignore
                             {...(isCurrent ? bind() : {})} // Only bind drag gestures to the current card
                             key={profile._id}
-                            className={`absolute w-full max-w-sm h-full bg-white rounded-xl shadow-lg flex flex-col overflow-hidden transform-gpu will-change-transform ${
+                            className={`absolute w-full max-w-sm h-full bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden transform-gpu will-change-transform ${
                                 !isCurrent ? 'hidden' : ''
                             }`}
                             {...cardProps}
@@ -214,7 +213,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ onMatchMade, onProfileProcessed }
                                         {profile.interests.map((interest) => (
                                             <span
                                                 key={interest}
-                                                className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                                                className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
                                             >
                                                 {interest}
                                             </span>

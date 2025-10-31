@@ -109,7 +109,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50">
-            <div className="relative w-full max-w-lg rounded-lg bg-white p-8 shadow-xl">
+            <div className="relative w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
                 <button
                     className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
                     onClick={onClose}
@@ -129,7 +129,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                         />
                     </svg>
                 </button>
-                <h2 className="mb-6 text-2xl font-bold text-indigo-700">
+                <h2 className="mb-6 text-2xl font-bold text-blue-700">
                     Edit Your Profile
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -143,7 +143,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                         <input
                             type="text"
                             id="name"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -159,7 +159,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                         <textarea
                             id="bio"
                             rows={3}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                             required
@@ -174,7 +174,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                         </label>
                         <select
                             id="gender"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             value={gender}
                             onChange={(e) => setGender(e.target.value)}
                             required
@@ -196,7 +196,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                         <input
                             type="text"
                             id="interests"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             value={interests.join(', ')}
                             onChange={handleInterestsChange}
                         />
@@ -211,7 +211,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                         <input
                             type="date"
                             id="dateOfBirth"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             value={dateOfBirth}
                             onChange={(e) => setDateOfBirth(e.target.value)}
                             required
@@ -229,10 +229,10 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                             id="profilePicture"
                             accept="image/*"
                             className="mt-1 block w-full text-sm text-gray-500
-                                file:mr-4 file:rounded-md file:border-0
-                                file:bg-indigo-50 file:px-4 file:py-2
-                                file:text-sm file:font-semibold file:text-indigo-700
-                                hover:file:bg-indigo-100"
+                                file:mr-4 file:rounded-lg file:border-0
+                                file:bg-blue-50 file:px-4 file:py-2
+                                file:text-sm file:font-semibold file:text-blue-700
+                                hover:file:bg-blue-100"
                             onChange={handleFileChange}
                         />
                         {previewProfilePicture && (
@@ -250,7 +250,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({
                     </div>
                     <button
                         type="submit"
-                        className="w-full rounded-md bg-indigo-600 px-4 py-2 text-lg font-semibold text-white shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="w-full rounded-xl bg-linear-to-r from-blue-500 to-blue-600 px-4 py-2 text-lg font-semibold text-white shadow-md hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         disabled={loading}
                     >
                         {loading ? 'Saving...' : 'Save Profile'}

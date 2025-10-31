@@ -40,7 +40,7 @@ function Auth() {
                 login(token);
 
                 alert('Login successful!');
-                navigate({ to: '/create-profile' });
+                navigate({ to: '/' });
             } else {
                 // Register Logic
                 const response = await axiosInstance.post('/auth/register', {

@@ -11,6 +11,7 @@ import { SocketContext } from '../contexts/SocketContext';
 import { toast } from 'react-toastify';
 import axiosInstance from '../api/axios';
 
+import HuggersUnitedLogo from '../assets/huggers-united-logo.png';
 
 const Dashboard: React.FC = () => {
     const { socket } = useContext(SocketContext);
@@ -118,23 +119,30 @@ const Dashboard: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
-            <header className="bg-white rounded-lg shadow-md p-4 mb-6 flex justify-between items-center">
-                <h1 className="text-3xl font-extrabold text-indigo-700">
-                    Dating App
-                </h1>
-                <nav>
-                    <ul className="flex space-x-4">
+        <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 lg:p-8">
+            <header className="mb-6 flex items-center justify-between rounded-2xl bg-white p-4 shadow-xl">
+                {/* Logo integration */}
+                <div className="flex items-center">
+                    <img
+                        src={HuggersUnitedLogo}
+                        alt="Huggers United Logo"
+                        className="h-12 w-auto" // Adjust size as needed
+                    />
+                </div>
+
+                {/* Navigation Buttons */}
+                <nav className="grow">
+                    <ul className="flex justify-center space-x-2 sm:space-x-4">
                         <li>
                             <button
                                 onClick={() => {
                                     setActiveTab('swipe');
                                     setSelectedMatch(null);
                                 }}
-                                className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
+                                className={`rounded-xl px-3 py-2 text-lg font-medium transition-colors sm:px-4 ${
                                     activeTab === 'swipe'
-                                        ? 'bg-indigo-600 text-white shadow-md'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
                                 }`}
                             >
                                 Swipe
@@ -146,10 +154,10 @@ const Dashboard: React.FC = () => {
                                     setActiveTab('liked-me');
                                     setSelectedMatch(null);
                                 }}
-                                className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
+                                className={`rounded-xl px-3 py-2 text-lg font-medium transition-colors sm:px-4 ${
                                     activeTab === 'liked-me'
-                                        ? 'bg-indigo-600 text-white shadow-md'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
                                 }`}
                             >
                                 Liked You
@@ -160,27 +168,26 @@ const Dashboard: React.FC = () => {
                                 onClick={() => {
                                     setActiveTab('matches');
                                 }}
-                                className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
+                                className={`rounded-xl px-3 py-2 text-lg font-medium transition-colors sm:px-4 ${
                                     activeTab === 'matches'
-                                        ? 'bg-indigo-600 text-white shadow-md'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
                                 }`}
                             >
                                 Matches
                             </button>
                         </li>
-                        {/* New Profile Tab */}
                         <li>
                             <button
                                 onClick={() => {
                                     setActiveTab('profile');
                                     setSelectedMatch(null);
-                                    openProfileModal(); // Open modal immediately when tab is clicked
+                                    openProfileModal();
                                 }}
-                                className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
+                                className={`rounded-xl px-3 py-2 text-lg font-medium transition-colors sm:px-4 ${
                                     activeTab === 'profile'
-                                        ? 'bg-indigo-600 text-white shadow-md'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'bg-linear-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
                                 }`}
                             >
                                 Profile
@@ -188,9 +195,11 @@ const Dashboard: React.FC = () => {
                         </li>
                     </ul>
                 </nav>
+
+                {/* Logout Button */}
                 <button
                     onClick={logout}
-                    className="rounded-md bg-red-500 px-4 py-2 shadow-lg transition duration-300 hover:bg-red-600"
+                    className="rounded-xl bg-red-500 px-4 py-2 text-white shadow-lg transition duration-300 hover:bg-red-600"
                 >
                     Logout
                 </button>
@@ -216,9 +225,8 @@ const Dashboard: React.FC = () => {
                             onBack={handleBackToMatchesList}
                         />
                     )}
-                    {/* No content needed directly here for 'profile' tab as modal handles it */}
                     {activeTab === 'profile' && (
-                        <div className="flex h-full items-center justify-center rounded-lg bg-white p-6 shadow-md">
+                        <div className="flex h-full items-center justify-center rounded-2xl bg-white p-6 shadow-xl">
                             <p className="text-xl text-gray-600">
                                 Your profile is being edited in the modal.
                             </p>
@@ -237,7 +245,6 @@ const Dashboard: React.FC = () => {
                 </aside>
             </main>
 
-            {/* Profile Update Modal */}
             <ProfileUpdateModal
                 isOpen={isProfileModalOpen}
                 onClose={closeProfileModal}

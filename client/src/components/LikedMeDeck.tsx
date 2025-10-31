@@ -1,31 +1,32 @@
 // src/components/LikedMeDeck.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react'; // Add useCallback
 import axiosInstance from '../api/axios';
-import type { Profile } from '../types'; // Assuming your Profile type is defined here
+import type { Profile } from '../types';
 import { FiX, FiHeart } from 'react-icons/fi';
 import { useSpring, animated } from '@react-spring/web';
+
 interface LikedMeDeckProps {
-    onMatchMade: (match: any) => void; // Callback for when a match is made from this deck
-    onProfileProcessed: (profileId: string) => void; // Callback to remove processed profile from parent
+    onMatchMade: (match: any) => void;
+    onProfileProcessed: (profileId: string) => void;
 }
 
 const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
     onMatchMade,
     onProfileProcessed,
 }) => {
-
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchProfilesThatLikedMe = async () => {
+    // Use useCallback to memoize the fetch function
+    const fetchProfilesThatLikedMe = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await axiosInstance.get('/profile/liked-me');
             setProfiles(response.data);
-            setCurrentIndex(0);
+            setCurrentIndex(0); // Reset index when new profiles are fetched
         } catch (err) {
             console.error('Error fetching profiles that liked current user:', err);
             setError('Failed to fetch profiles. Please try again.');
@@ -33,11 +34,11 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
         } finally {
             setLoading(false);
         }
-    };
+    }, []); // Empty dependency array means it's created once
 
     useEffect(() => {
         fetchProfilesThatLikedMe();
-    }, []);
+    }, [fetchProfilesThatLikedMe]); // Dependency on the memoized function
 
     // Spring animation for the current card
     const [{ x, rot, scale }, api] = useSpring(() => ({
@@ -64,24 +65,28 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
             });
 
             if (response.data.match) {
-                // If a match is created, trigger the onMatchMade callback
                 onMatchMade(response.data.match);
             }
 
-            // Remove the processed profile from the list locally
-            setProfiles((prev) => prev.filter((p) => p.user !== likedUserId));
+            // Immediately remove the processed profile from the local state
+            setProfiles((prev) => {
+                const updatedProfiles = prev.filter((p) => p.user !== likedUserId);
+                // If there are still profiles left, move to the next one
+                if (updatedProfiles.length > 0) {
+                    setCurrentIndex(0); // Start from the beginning of the new list if needed, or simply let the next render handle it
+                } else {
+                    // If no profiles left, refetch a fresh batch
+                    fetchProfilesThatLikedMe();
+                }
+                return updatedProfiles;
+            });
             onProfileProcessed(likedUserId); // Notify parent component
 
-            if (currentIndex < profiles.length - 1) {
-                setCurrentIndex((prev) => prev + 1);
-                resetCard(); // Reset animation for the next card
-            } else {
-                // If no more cards in the current batch, refetch
-                await fetchProfilesThatLikedMe();
-            }
+            resetCard(); // Reset animation for the next potential card
         } catch (err) {
             console.error('Error interacting with profile:', err);
-            // Re-fetch profiles in case of error to ensure UI consistency
+            // In case of an error during interaction, it's safer to re-fetch
+            // to ensure the UI is consistent with the backend state.
             fetchProfilesThatLikedMe();
         }
     };
@@ -107,7 +112,7 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
     if (loading) {
         return (
             <div className="flex justify-center items-center h-40">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 <p className="ml-4 text-gray-700">Loading profiles...</p>
             </div>
         );
@@ -115,11 +120,11 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
 
     if (error) {
         return (
-            <div className="flex flex-col justify-center items-center h-40 bg-red-100 p-4 rounded-lg">
+            <div className="flex flex-col justify-center items-center h-40 bg-red-100 p-4 rounded-xl">
                 <p className="text-red-700 mb-2">{error}</p>
                 <button
                     onClick={fetchProfilesThatLikedMe}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600"
                 >
                     Retry
                 </button>
@@ -129,16 +134,16 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
 
     if (!currentProfile) {
         return (
-            <div className="flex flex-col justify-center items-center h-40 bg-gray-100 p-4 rounded-lg">
-                <p className="text-lg font-semibold text-gray-800">
+            <div className="flex flex-col justify-center items-center h-40 bg-blue-50 p-4 rounded-xl">
+                <p className="text-lg font-semibold text-blue-800">
                     No one has liked you yet.
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-blue-600">
                     Keep swiping! More profiles will appear here.
                 </p>
                 <button
                     onClick={fetchProfilesThatLikedMe}
-                    className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                 >
                     Refresh
                 </button>
@@ -147,12 +152,12 @@ const LikedMeDeck: React.FC<LikedMeDeckProps> = ({
     }
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Liked By You</h2>
+        <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-xl">
+            <h2 className="text-2xl font-bold text-blue-800 mb-6">Liked By You</h2>
             <div className="relative w-full max-w-xs h-80 flex justify-center items-center">
                 <animated.div
                     key={currentProfile._id}
-                    className={`absolute w-full max-w-xs h-full bg-white rounded-xl shadow-lg flex flex-col overflow-hidden transform-gpu will-change-transform`}
+                    className={`absolute w-full max-w-xs h-full bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden transform-gpu will-change-transform`}
                     style={{ x, rotateZ: rot, scale }}
                 >
                     <img
