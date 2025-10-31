@@ -33,9 +33,7 @@ const MatchesList: React.FC<MatchesListProps> = ({ onMatchClick, newMatchTrigger
     };
 
     useEffect(() => {
-        if (user) {
-            fetchMatches();
-        }
+        fetchMatches();
     }, [user, newMatchTrigger]); // Refetch when user changes or newMatchTrigger changes
 
     if (loading) {

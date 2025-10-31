@@ -23,13 +23,6 @@ router.route("/").post(protect,
     createOrUpdateProfile);
 
 /* 
-    @desc    Get a random profile for a user
-    @route   GET /api/profile/random
-    @access  Private
-*/
-router.get("/random", protect, getRandomProfileForUser);
-
-/* 
     @desc    Get a user's profile
     @route   GET /api/profile/me
     @access  Private

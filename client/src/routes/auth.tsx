@@ -33,7 +33,7 @@ function Auth() {
                 });
                 const { token, _id, username: loggedInUsername } = response.data;
 
-                login(token);
+                await login(token);
 
                 alert('Login successful!');
                 navigate({ to: '/' });
@@ -45,12 +45,8 @@ function Auth() {
                     password
                 });
                 const { token, _id, username: registeredUsername } = response.data;
-                console.log('Registration successful!');
-                console.log('User ID:', _id);
-                console.log('Username:', registeredUsername);
-                console.log('Token:', token);
 
-                login(token);
+                await login(token);
                 alert('Registration successful!');
                 navigate({ to: '/create-profile' });
             }

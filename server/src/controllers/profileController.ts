@@ -181,118 +181,131 @@ export const getRandomProfileForUser = async (req: ProfileRequest, res: Response
 export const likeOrDislikeProfile = async (req: ProfileRequest, res: Response, next: NextFunction) => {
     try {
         const currentUserId = req.user?._id as mongoose.Types.ObjectId;
-        const { likedUserId, action } = req.body; // action can be "liked" or "disliked"
+        const { likedUserId: targetLikedUserId, action } = req.body; // action can be "liked" or "disliked"
 
         if(!currentUserId) {
             logger.error("User ID not found");
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        if(!likedUserId || !action || !["liked", "disliked"].includes(action)) {
+        if(!targetLikedUserId || !action || !["liked", "disliked"].includes(action)) {
             logger.error("Invalid request. 'likedUserId' and 'action' are required.");
             return res.status(400).json({ message: "Invalid request. 'likedUserId' and 'action' are required." });
         }
 
-        if (currentUserId.toString() === likedUserId) {
+        if (currentUserId.toString() === targetLikedUserId) {
             logger.error("You cannot like or dislike yourself.");
             return res.status(400).json({ message: "You cannot like or dislike yourself." });
         }
 
-        const existingInteraction = await Like.findOne({
-            liker: currentUserId,
-            liked: likedUserId,
-        });
-
-        // Check if the user has already interacted with the profile
-        if (existingInteraction) {
-            logger.error("You have already interacted with this profile.");
-            return res.status(409).json({ message: "You have already interacted with this profile." });
-        }
-
-        // Create a new interaction
-        const newLike = await Like.create({
-            liker: currentUserId,
-            liked: likedUserId,
-            status: action,
-        });
-
-        if (action === "disliked") {
-            logger.debug(`User ${currentUserId} disliked user ${likedUserId}`);
-            // If its a dislike, record it and return. Sad No Match :<
-            return res.status(200).json({ message: "Profile disliked successfully.", like: newLike });
-        }
-
-        const mutualLike = await Like.findOne({
-            liker: likedUserId,
+        // Check if the targetLikdUserId has already liked the current user
+        const hasTargetLikedCurrentUser = await Like.findOne({
+            liker: targetLikedUserId,
             liked: currentUserId,
             status: "liked",
         });
 
-        if(mutualLike) {
-            // If its a like, its a match. Match! :>
-            const usersInMatch = [currentUserId, likedUserId];
+        logger.info(`hasTargetLikedCurrentUser: ${hasTargetLikedCurrentUser}`);
+
+        // Check for an existing interaction from the current user to the target
+        const existingIntecractionFromCurrentUser = await Like.findOne({
+            liker: currentUserId,
+            liked: targetLikedUserId,
+        });
+
+        logger.info(`existingIntecractionFromCurrentUser: ${existingIntecractionFromCurrentUser}`);
+
+        if (existingIntecractionFromCurrentUser) {
+            if (action === "liked" && existingIntecractionFromCurrentUser.status === "disliked") {
+                logger.error("You have already disliked this profile.");
+                return res.status(409).json({ message: "You have already disliked this profile." });
+            } 
+            if (action === "disliked" && existingIntecractionFromCurrentUser.status === "liked") {
+                logger.error("You have already liked this profile.");
+                return res.status(409).json({ message: "You have already liked this profile." });
+            }
+            if (existingIntecractionFromCurrentUser.status === action) {
+                logger.error(`You have already interacted with this profile with status ${action}.`);
+                return res.status(409).json({ message: "You have already interacted with this profile." });
+            }
+            logger.error("You have already interacted with this profile.");
+            return res.status(409).json({ message: "You have already interacted with this profile." });
+        }
+
+        let newLike: any;
+
+        newLike = await Like.create({
+            liker: currentUserId,
+            liked: targetLikedUserId,
+            status: action
+        });
+
+        if (action === "disliked") {
+            logger.info(`You disliked profile with ID: ${targetLikedUserId}`);
+            return res.status(200).json({ message: `You disliked profile with ID: ${targetLikedUserId}` });
+        }
+
+        if (hasTargetLikedCurrentUser) {
+            const usersInMatch = [currentUserId, targetLikedUserId];
             usersInMatch.sort((a, b) => a.toString().localeCompare(b.toString()));
 
             let match = await Match.findOne({
                 users: usersInMatch,
             });
 
+            console.log(match);
+
             if (!match) {
-                // If no match found, create a new match
                 match = await Match.create({
                     users: usersInMatch,
                 });
 
-                // Emit Socket.io event for both users
                 const io = req.io;
                 const onlineUsers = req.onlineUsers;
 
-                if(io && onlineUsers) {
+                if (io && onlineUsers) {
                     const currentProfile = await Profile.findOne({ user: currentUserId });
-                    const likedUserProfile = await Profile.findOne({ user: likedUserId });
+                    const likedUserProfile = await Profile.findOne({ user: targetLikedUserId });
 
                     const currentUsername = currentProfile?.name || "A user";
                     const likedUsername = likedUserProfile?.name || "A user";
 
-                    // Notify the 'liker' (current user)
                     const likerSocketId = onlineUsers.get(currentUserId.toString());
                     if (likerSocketId) {
                         io.to(likerSocketId).emit("newMatch", {
                             matchId: match._id,
                             otherUser: {
-                                _id: likedUserId,
+                                _id: targetLikedUserId,
                                 username: likedUsername,
-                                profilePicture: likedUserProfile?.profilePicture,
+                                profilePicture: likedUserProfile?.profilePicture
                             },
                             message: `You have a new match with ${likedUsername}!`,
                         });
-                        logger.debug(`Sent 'newMatch' event to user ${currentUserId}`);
+                        logger.debug(`Sent newMatch event to socket ${likerSocketId}`);
                     }
 
-                    const likedUserSocketId = onlineUsers.get(likedUserId.toString());
+                    const likedUserSocketId = onlineUsers.get(targetLikedUserId.toString());
                     if (likedUserSocketId) {
                         io.to(likedUserSocketId).emit("newMatch", {
                             matchId: match._id,
                             otherUser: {
                                 _id: currentUserId,
                                 username: currentUsername,
-                                profilePicture: currentProfile?.profilePicture,
+                                profilePicture: currentProfile?.profilePicture
                             },
                             message: `You have a new match with ${currentUsername}!`,
                         });
-                        logger.debug(`Sent 'newMatch' event to user ${likedUserId}`);
+                        logger.debug(`Sent newMatch event to socket ${likedUserSocketId}`);
                     }
                 }
-                return res.status(201).json({ message: "Match created successfully.", match, like: newLike });
+                return res.status(201).json({ message: "Match created", match: match, like: newLike });
             } else {
-                // If match found (due to Race Condition), return
                 return res.status(200).json({ message: "Match already exists.", match, like: newLike });
             }
         } else {
-            // If its a like, return
-            return res.status(200).json({ message: "Profile liked successfully.", like: newLike });
+            return res.status(200).json({ message: "Match already exists.", like: newLike });
         }
-
+        
     } catch (error: any) {
         logger.error(`Error liking or disliking profile: ${error}`);
         if (error.code === 11000) {

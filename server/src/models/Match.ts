@@ -27,7 +27,17 @@ const MatchSchema: Schema = new Schema(
 )
 
 // Create a unique index to ensure that there is only one match between two users
-MatchSchema.index({ users: 1 }, { unique: true });
+MatchSchema.index(
+    { 
+        users: 1 
+    }, 
+    { 
+        unique: true, 
+        partialFilterExpression: {
+            'users.1': { $exists: true },
+            'users.2': { $exists: false }
+        }
+});
 
 // Sort the users array before saving
 MatchSchema.pre<IMatch>("save", async function (next) {

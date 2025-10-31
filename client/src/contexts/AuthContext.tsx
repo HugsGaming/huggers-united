@@ -7,7 +7,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     userToken: string | null;
     user: User | null;
-    login: (token: string) => void;
+    login: (token: string) => Promise<void>;
     logout: () => void;
     isLoadingAuth: boolean;
     fetchUserDetails: () => Promise<void>;
@@ -23,28 +23,63 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => {
 
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const token = localStorage.getItem('userToken');
+        if (token) {
+            setUserToken(token);
+        }
+        setIsLoadingAuth(false);
+    }, [])
+
+    useEffect(() => {
+        const loadUserAndAuthStatus = async () => {
+            if (userToken) {
+                setIsAuthenticated(true);
+                try {
+                    await fetchUserDetails();
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                    logout();
+                }
+            } else {
+                setIsAuthenticated(false);
+                setUser(null);
+            }
+            
+        }
+    })
+
     const fetchUserDetails = async () => {
         if(!userToken) {
             setUser(null);
-            return;
+            throw new Error('User token not found');
         }
         try {
             const response = await axiosInstance.get('/profile/me');
-
             const profileData = response.data;
+
             if (profileData && profileData.user && profileData.username) {
-                setUser({
-                    _id: profileData.user,
+                 setUser({
+                    _id: profileData.user._id || profileData.user, // Adjust based on your API response for _id
+                    username: profileData.username,
+                    email: profileData.email
+                });
+            } else if (profileData && profileData._id && profileData.username && profileData.email) {
+                 // If /profile/me returns the User object directly
+                 setUser({
+                    _id: profileData._id,
                     username: profileData.username,
                     email: profileData.email
                 });
             } else {
                 console.warn("Profile data for user details not as expected.", profileData);
                 setUser(null);
+                throw new Error("Invalid profile data received.");
             }
         } catch (error) {
             console.error('Error fetching user details:', error);
-            logout();
+            setUser(null);
+            throw error;
         }
     }
 
@@ -66,7 +101,7 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => {
         }
     }, [userToken, isAuthenticated]);
 
-    const login = (token: string) => {
+    const login = async (token: string) => {
         localStorage.setItem('userToken', token);
         setIsAuthenticated(true);
         setUserToken(token);

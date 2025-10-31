@@ -14,7 +14,7 @@ export const Route = createFileRoute('/create-profile')({
     try {
       const response = await axiosInstance.get('/profile/me');
       console.log('Profile:', response.data);
-      redirect({
+      throw redirect({
         to: '/'
       });
     } catch(error: any) {
